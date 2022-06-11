@@ -1,46 +1,64 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useReducer } from "react";
 
 import Card from "../UI/Card/Card";
 import classes from "./Login.module.css";
 import Button from "../UI/Button/Button";
 
+const loginReducer = (state, action) => {
+  switch (action.type) {
+    case "SET_EMAIL":
+      return { ...state, email: action.email };
+    case "SET_PASSWORD":
+      return { ...state, password: action.password };
+    case "BLUR":
+      return {
+        ...state,
+        emailValid: state.email.length && state.email.includes("@"),
+        passwordValid:
+          state.password.length && state.password.trim().length > 6,
+      };
+    case "VALIDATE":
+      return { ...state, formValid: state.emailValid && state.passwordValid };
+    default:
+      console.log("Should not get here!");
+  }
+};
+
+const init = {
+  password: "",
+  email: "",
+  passwordValid: null,
+  emailValid: null,
+  formValid: false,
+};
+
 const Login = (props) => {
-  const [enteredEmail, setEnteredEmail] = useState("");
-  const [emailIsValid, setEmailIsValid] = useState();
-  const [enteredPassword, setEnteredPassword] = useState("");
-  const [passwordIsValid, setPasswordIsValid] = useState();
-  const [formIsValid, setFormIsValid] = useState(false);
+  const [login, dispatchLogin] = useReducer(loginReducer, init);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setFormIsValid(
-        enteredEmail.includes("@") && enteredPassword.trim().length > 6
-      );
+      dispatchLogin({ type: "VALIDATE" });
     }, 500);
     return () => {
       clearTimeout(timeout);
     };
-  }, [enteredEmail, enteredPassword]);
+  }, [login]);
 
-  const emailChangeHandler = (event) => {
-    setEnteredEmail(event.target.value);
+  const emailChangeHandler = (e) => {
+    dispatchLogin({ type: "SET_EMAIL", email: e.target.value });
   };
 
-  const passwordChangeHandler = (event) => {
-    setEnteredPassword(event.target.value);
+  const passwordChangeHandler = (e) => {
+    dispatchLogin({ type: "SET_PASSWORD", password: e.target.value });
   };
 
-  const validateEmailHandler = () => {
-    setEmailIsValid(enteredEmail.includes("@"));
-  };
-
-  const validatePasswordHandler = () => {
-    setPasswordIsValid(enteredPassword.trim().length > 6);
+  const blurHandler = () => {
+    dispatchLogin({ type: "BLUR" });
   };
 
   const submitHandler = (event) => {
     event.preventDefault();
-    props.onLogin(enteredEmail, enteredPassword);
+    props.onLogin(login.email, login.password);
   };
 
   return (
@@ -48,34 +66,38 @@ const Login = (props) => {
       <form onSubmit={submitHandler}>
         <div
           className={`${classes.control} ${
-            emailIsValid === false ? classes.invalid : ""
+            login.emailValid === false ? classes.invalid : ""
           }`}
         >
           <label htmlFor="email">E-Mail</label>
           <input
             type="email"
             id="email"
-            value={enteredEmail}
+            value={login.email}
             onChange={emailChangeHandler}
-            onBlur={validateEmailHandler}
+            onBlur={blurHandler}
           />
         </div>
         <div
           className={`${classes.control} ${
-            passwordIsValid === false ? classes.invalid : ""
+            login.passwordValid === false ? classes.invalid : ""
           }`}
         >
           <label htmlFor="password">Password</label>
           <input
             type="password"
             id="password"
-            value={enteredPassword}
+            value={login.password}
             onChange={passwordChangeHandler}
-            onBlur={validatePasswordHandler}
+            onBlur={blurHandler}
           />
         </div>
         <div className={classes.actions}>
-          <Button type="submit" className={classes.btn} disabled={!formIsValid}>
+          <Button
+            type="submit"
+            className={classes.btn}
+            disabled={!login.formValid}
+          >
             Login
           </Button>
         </div>
