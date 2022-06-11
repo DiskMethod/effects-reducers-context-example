@@ -42,13 +42,14 @@ const Login = (props) => {
     return () => {
       clearTimeout(timeout);
     };
-  }, [login]);
+  }, [login.passwordValid, login.emailValid]);
 
   const emailChangeHandler = (e) => {
     dispatchLogin({ type: "SET_EMAIL", email: e.target.value });
   };
 
   const passwordChangeHandler = (e) => {
+    console.log("password changing");
     dispatchLogin({ type: "SET_PASSWORD", password: e.target.value });
   };
 
