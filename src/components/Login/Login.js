@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 
 import Card from "../UI/Card/Card";
 import classes from "./Login.module.css";
@@ -35,6 +35,8 @@ const init = {
 
 const Login = (props) => {
   const [login, dispatchLogin] = useReducer(loginReducer, init);
+  const emailRef = useRef();
+  const passwordRef = useRef();
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -58,14 +60,22 @@ const Login = (props) => {
   };
 
   const submitHandler = (e) => {
+    console.log(emailRef, passwordRef);
     e.preventDefault();
-    props.onLogin(login.email, login.password);
+    if (login.formValid) {
+      props.onLogin(login.email, login.password);
+    } else if (!login.emailValid) {
+      emailRef.current.focus();
+    } else {
+      passwordRef.current.focus();
+    }
   };
 
   return (
     <Card className={classes.login}>
       <form onSubmit={submitHandler}>
         <Input
+          ref={emailRef}
           className={`${classes.control} ${
             login.emailValid === false ? classes.invalid : ""
           }`}
@@ -77,6 +87,7 @@ const Login = (props) => {
           onBlur={blurHandler}
         />
         <Input
+          ref={passwordRef}
           className={`${classes.control} ${
             login.passwordValid === false ? classes.invalid : ""
           }`}
@@ -91,7 +102,7 @@ const Login = (props) => {
           <Button
             type="submit"
             className={classes.btn}
-            disabled={!login.formValid}
+            // disabled={!login.formValid}
           >
             Login
           </Button>
