@@ -3,6 +3,7 @@ import React, { useEffect, useReducer } from "react";
 import Card from "../UI/Card/Card";
 import classes from "./Login.module.css";
 import Button from "../UI/Button/Button";
+import Input from "../UI/Input/Input";
 
 const loginReducer = (state, action) => {
   switch (action.type) {
@@ -64,34 +65,28 @@ const Login = (props) => {
   return (
     <Card className={classes.login}>
       <form onSubmit={submitHandler}>
-        <div
+        <Input
           className={`${classes.control} ${
             login.emailValid === false ? classes.invalid : ""
           }`}
-        >
-          <label htmlFor="email">E-Mail</label>
-          <input
-            type="email"
-            id="email"
-            value={login.email}
-            onChange={emailChangeHandler}
-            onBlur={blurHandler}
-          />
-        </div>
-        <div
+          type="email"
+          id="email"
+          label="E-Mail"
+          value={login.email}
+          onChange={emailChangeHandler}
+          onBlur={blurHandler}
+        />
+        <Input
           className={`${classes.control} ${
             login.passwordValid === false ? classes.invalid : ""
           }`}
-        >
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            value={login.password}
-            onChange={passwordChangeHandler}
-            onBlur={blurHandler}
-          />
-        </div>
+          type="password"
+          id="password"
+          label="Password"
+          value={login.password}
+          onChange={passwordChangeHandler}
+          onBlur={blurHandler}
+        />
         <div className={classes.actions}>
           <Button
             type="submit"
