@@ -60,7 +60,6 @@ const Login = (props) => {
   };
 
   const submitHandler = (e) => {
-    console.log(emailRef, passwordRef);
     e.preventDefault();
     if (login.formValid) {
       props.onLogin(login.email, login.password);
