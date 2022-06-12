@@ -49,7 +49,6 @@ const Login = (props) => {
   };
 
   const passwordChangeHandler = (e) => {
-    console.log("password changing");
     dispatchLogin({ type: "SET_PASSWORD", password: e.target.value });
   };
 
@@ -57,8 +56,8 @@ const Login = (props) => {
     dispatchLogin({ type: "BLUR" });
   };
 
-  const submitHandler = (event) => {
-    event.preventDefault();
+  const submitHandler = (e) => {
+    e.preventDefault();
     props.onLogin(login.email, login.password);
   };
 
